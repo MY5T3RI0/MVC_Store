@@ -164,6 +164,8 @@
     <Content Include="Areas\Admin\Views\Dashboard\Index.cshtml" />
     <Content Include="Areas\Admin\Views\Page\Index.cshtml" />
     <Content Include="Areas\Admin\Views\Page\AddPage.cshtml" />
+    <Content Include="Areas\Admin\Views\Page\EditPage.cshtml" />
+    <Content Include="Areas\Admin\Views\Page\PageDetails.cshtml" />
     <None Include="Scripts\jquery-3.6.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.6.0.js" />
     <Content Include="Scripts\jquery-3.6.0.min.js" />
