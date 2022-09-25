@@ -29,6 +29,9 @@ namespace MVC_Store
                       "~/Content/bootstrap.css",
                       "~/Content/site.css",
                        "~/Content/jquery-ui.css"));
+
+            bundles.Add(new ScriptBundle("~/bundles/ckeditor").Include(
+                      "~/Scripts/ckeditor/ckeditor.js"));
         }
     }
 }

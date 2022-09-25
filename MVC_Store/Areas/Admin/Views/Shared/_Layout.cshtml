@@ -11,20 +11,20 @@
 <body style="height:100vh">
     <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
         <div class="container-fluid">
-            @Html.ActionLink("Dashboard", "Index", "Dashboard", new { @class = "navbar-brand" })
+            @Html.ActionLink("Dashboard", "Index", "Dashboard", "", new { @class = "navbar-brand" })
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarText">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">Home</a>
+                        @Html.ActionLink("Pages", "Index", "Page", "", new { @class = "nav-link" })
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Features</a>
+                        @Html.ActionLink("Sidebar", "EditSidebar", "Page", "", new { @class = "nav-link" })
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Pricing</a>
+                        @*<a class="nav-link" href="#">Pricing</a>*@
                     </li>
                 </ul>
 
@@ -52,6 +52,7 @@
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/jqueryui")
     @Scripts.Render("~/Scripts/bootstrap.js")
+    @Scripts.Render("~/bundles/ckeditor")
     @RenderSection("scripts", required: false)
 </body>
 </html>
