@@ -155,7 +155,7 @@ namespace MVC_Store.Areas.Admin.Controllers
                 db.SaveChanges();
             }
 
-            TempData["SM"] = "You has edited the page";
+            TempData["SM"] = "You have edited the page";
 
             return RedirectToAction("EditPage");
         }
@@ -175,6 +175,47 @@ namespace MVC_Store.Areas.Admin.Controllers
             }
 
             return View(model);
+        }
+
+        public ActionResult DeletePage(int id)
+        {
+
+            using (var db = new Db())
+            {
+                var dto = db.Pages.Find(id);
+
+                if (dto == null)
+                {
+                    return Content("That page has not exist.");
+                }
+
+                db.Pages.Remove(dto);
+                db.SaveChanges();
+
+            }
+
+            TempData["SM"] = "You have deleted the page";
+
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public void ReorderPages(int[] id)
+        {
+            using (var db = new Db())
+            {
+                int count = 1;
+
+                PagesDTO dto;
+
+                foreach (var pageId in id)
+                {
+                    dto = db.Pages.Find(pageId);
+                    dto.Sorting = count;
+                    db.SaveChanges();
+                    count++;
+                }
+            }
         }
     }
 }

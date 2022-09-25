@@ -22,3 +22,12 @@ select,
 textarea {
     max-width: 280px;
 }
+
+.deletion{
+    display: inline-flex;
+    flex-wrap: nowrap;
+}
+
+.deletion a{
+    margin-right: 4px;
+}
