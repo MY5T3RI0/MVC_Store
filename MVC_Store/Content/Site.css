@@ -31,3 +31,12 @@ textarea {
 .deletion a{
     margin-right: 4px;
 }
+
+.new-cat {
+    margin-top: 30px;
+    position: relative;
+}
+
+.ajax-text{
+    display: none;
+}
