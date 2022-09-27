@@ -117,5 +117,17 @@ namespace MVC_Store.Areas.Admin.Controllers
 
             return "ok";
         }
+
+        public ActionResult AddProduct()
+        {
+            var model = new ProductVM();
+
+            using (var db = new Db())
+            {
+                model.Categories = new SelectList(db.Categories.ToList(), "id", "Name");
+            }
+
+            return View(model);
+        }
     }
 }
