@@ -18,7 +18,7 @@ namespace MVC_Store.Models.ViewModels.Shop
 
         public ProductVM(ProductDTO row)
         {
-            ID = row.ID;
+            Id = row.Id;
             Slug = row.Slug;
             Name = row.Name;
             Description = row.Description;
@@ -28,17 +28,22 @@ namespace MVC_Store.Models.ViewModels.Shop
             ImageName = row.ImageName;
         }
 
-        public int ID { get; set; }
+        public int Id { get; set; }
         public string Slug { get; set; }
+
         [Required]
         public string Name { get; set; }
+
         [Required]
         public string Description { get; set; }
         public decimal Price { get; set; }
         public string CategoryName { get; set; }
+
         [Required]
         [DisplayName("Category")]
         public int CategoryId { get; set; }
+
+        [DisplayName("Name")]
         public string ImageName { get; set; }
         public IEnumerable<SelectListItem> Categories { get; set; }
         public IEnumerable<string> GalleryImages { get; set; }

@@ -1,5 +1,6 @@
 ﻿using MVC_Store.Models.Data;
 using MVC_Store.Models.ViewModels.Shop;
+using PagedList;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -170,7 +171,7 @@ namespace MVC_Store.Areas.Admin.Controllers
                 db.Products.Add(dto);
                 db.SaveChanges();
 
-                id = dto.ID;
+                id = dto.Id;
             }
 
             TempData["SM"] = "You have added a product!";
@@ -212,7 +213,7 @@ namespace MVC_Store.Areas.Admin.Controllers
                     }
                 }
 
-                string imageName = file.FileName;
+                string imageName = file.FileName.Replace(" ", "_");
 
                 using (var db = new Db())
                 {
@@ -233,6 +234,98 @@ namespace MVC_Store.Areas.Admin.Controllers
             }
 
             return RedirectToAction("AddProduct");
+        }
+
+        [HttpGet]
+        public ActionResult Products(int? page, int? catId)
+        {
+            List<ProductVM> listOfProductVM;
+
+            var pageNumber = page ?? 1;
+
+            using (var db = new Db())
+            {
+                listOfProductVM = db.Products.ToArray()
+                    .Where(p => catId == null || catId == 0 || p.CategoryId == catId)
+                    .Select(p => new ProductVM(p))
+                    .ToList();
+                ViewBag.Categories = new SelectList(db.Categories.ToList(), "id", "Name");
+
+                ViewBag.SelectedCat = catId.ToString();
+            }
+
+            var onePageOfProducts = listOfProductVM.ToPagedList(pageNumber, 3);
+            ViewBag.onePageOfProducts = onePageOfProducts;
+
+            return View(listOfProductVM);
+        }
+
+        [HttpGet]
+        public ActionResult EditProduct(int id)
+        {
+            ProductVM model;
+
+            using (var db = new Db())
+            {
+                var dto = db.Products.Find(id);
+
+                if (dto == null)
+                {
+                    return Content("That product does not exist");
+                }
+
+                model = new ProductVM(dto);
+                model.Categories = new SelectList(db.Categories.ToList(), "id", "Name");
+                model.GalleryImages = Directory
+                    .EnumerateFiles(Server.MapPath("~/Images/Uploads/Products/" + id + "/Gallery/Thumbs"))
+                    .Select(f => Path.GetFileName(f));
+            }
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult EditProduct(ProductVM model, HttpPostedFileBase file)
+        {
+            var id = model.Id;
+
+            using (var db = new Db())
+            {
+                model.Categories = new SelectList(db.Categories.ToList(), "id", "Name");
+                model.GalleryImages = Directory
+                   .EnumerateFiles(Server.MapPath("~/Images/Uploads/Products/" + id + "/Gallery/Thumbs"))
+                   .Select(f => Path.GetFileName(f));
+
+                if (!ModelState.IsValid)
+                {
+                    ModelState.AddModelError("", "Model is not valid");
+                    return View(model);
+                }
+
+                if (db.Products.Where(p => p.Id != id).Any(p => p.Name == model.Name))
+                {
+                    ModelState.AddModelError("", "That product name is taken!");
+                    return View(model);
+                }
+
+                var dto = db.Products.Find(id);
+
+                dto.Name = model.Name;
+                dto.Slug = model.Name.Replace(" ", "-").ToLower();
+                dto.Description = model.Description;
+                dto.Price = model.Price;
+                dto.CategoryId = model.CategoryId;
+                dto.ImageName = model.ImageName;
+
+                var catDTO = db.Categories.FirstOrDefault(c => c.Id == model.CategoryId);
+                dto.CategoryName = catDTO.Name;
+
+                db.SaveChanges();
+            }
+
+            TempData["SM"] = "You have edited a product";
+
+            return RedirectToAction("EditProduct");
         }
     }
 }
