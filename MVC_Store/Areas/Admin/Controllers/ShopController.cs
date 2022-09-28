@@ -325,7 +325,94 @@ namespace MVC_Store.Areas.Admin.Controllers
 
             TempData["SM"] = "You have edited a product";
 
+            if (file != null && file.ContentLength > 0)
+            {
+                var ext = file.ContentType.ToLower();
+                if
+                (
+                    ext != "image/jpg" &&
+                    ext != "image/jpeg" &&
+                    ext != "image/pjpeg" &&
+                    ext != "image/gif" &&
+                    ext != "image/x-png" &&
+                    ext != "image/png"
+                )
+                {
+                    using (var db = new Db())
+                    {
+                        ModelState.AddModelError("", "The image was not upload - wrong image extention");
+                        return View(model);
+                    }
+                }
+
+                var originalDirectory = new DirectoryInfo(string.Format($"{Server.MapPath(@"\")}Images\\Uploads"));
+
+                var pathString1 = Path.Combine(originalDirectory.ToString(), "Products\\" + id.ToString());
+                var pathString2 = Path.Combine(originalDirectory.ToString(), "Products\\" + id.ToString() + "\\Thumbs");
+
+                var di1 = new DirectoryInfo(pathString1);
+                var di2 = new DirectoryInfo(pathString2);
+
+                foreach (var file2 in di1.GetFiles())
+                {
+                    file2.Delete();
+                }
+                foreach (var file2 in di2.GetFiles())
+                {
+                    file2.Delete();
+                }
+
+                var imageName = file.FileName.Replace(" ", "_");
+
+                using (var db = new Db())
+                {
+                    var product = db.Products.Find(id);
+                    product.ImageName = imageName;
+
+                    db.SaveChanges();
+                }
+
+                var path = string.Format($"{pathString1}\\{imageName}");
+                var path2 = string.Format($"{pathString2}\\{imageName}");
+
+                file.SaveAs(path);
+
+                WebImage img = new WebImage(file.InputStream);
+                img.Resize(200, 200);
+                img.Save(path2);
+            }
+
             return RedirectToAction("EditProduct");
+        }
+
+        public ActionResult DeleteProduct(int id)
+        {
+
+            using (var db = new Db())
+            {
+                var dto = db.Products.Find(id);
+
+                if (dto == null)
+                {
+                    return Content("That product has not exist.");
+                }
+
+                db.Products.Remove(dto);
+                db.SaveChanges();
+
+            }
+
+            TempData["SM"] = "You have deleted a product";
+
+            var originalDirectory = new DirectoryInfo(string.Format($"{Server.MapPath(@"\")}Images\\Uploads"));
+            var pathString2 = Path.Combine(originalDirectory.ToString(), "Products\\" + id.ToString());
+
+            if (Directory.Exists(pathString2))
+            {
+                Directory.Delete(pathString2, true);
+            }
+
+            return RedirectToAction("Products");
         }
     }
 }
