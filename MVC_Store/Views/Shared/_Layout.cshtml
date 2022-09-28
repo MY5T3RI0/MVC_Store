@@ -4,28 +4,22 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - My ASP.NET Application</title>
+    <title>@ViewBag.Title - MVC 5 Shoping Cart</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">Navbar w/ text</a>
+            <a class="navbar-brand" href="/">Mysterio Shop</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarText">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Features</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Pricing</a>
-                    </li>
+
+                    @Html.Action("PagesMenuPartial", "Pages")
+
                 </ul>
                 <span class="navbar-text">
                     Navbar text with an inline element
@@ -33,15 +27,44 @@
             </div>
         </div>
     </nav>
+
     <div class="container body-content">
-        @RenderBody()
+        <div class="row" style="min-height:83.5vh">
+
+            <div class="col-sm-12 col-md-3 list-group" style="position:relative">
+                <div class="fixed">
+                    @Html.Action("CategoryMenuPartial", "Shop")
+                </div>
+            </div>
+
+            @if (ViewBag.Sidebar == "Yes")
+            {
+                <div class="col">
+                    @RenderBody()
+                </div>
+                <div class="col-sm-12 col-md-3" style="position:relative">
+                    <div class="fixed">
+                        @Html.Action("SidebarPartial", "Pages")
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="col">
+                    @RenderBody()
+                </div>
+            }
+        </div>
+
         <hr />
         <footer>
-            <p>&copy; @DateTime.Now.Year - мое приложение ASP.NET</p>
+            <p>&copy; @DateTime.Now.Year - Mysterio Shop</p>
         </footer>
+
     </div>
 
     @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/scripts")
     @Scripts.Render("~/Scripts/bootstrap.js")
     @RenderSection("scripts", required: false)
 </body>
