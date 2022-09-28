@@ -414,5 +414,50 @@ namespace MVC_Store.Areas.Admin.Controllers
 
             return RedirectToAction("Products");
         }
+
+        [HttpPost]
+        public void SaveGalleryImages(int id)
+        {
+            foreach (string fileName in Request.Files)
+            {
+                var file = Request.Files[fileName];
+
+                if (file != null && file.ContentLength > 0)
+                {
+                    var originalDirectory = new DirectoryInfo(string.Format($"{Server.MapPath(@"\")}Images\\Uploads"));
+
+                    var pathString1 = Path.Combine(originalDirectory.ToString(), "Products\\" + id.ToString() + "\\Gallery");
+                    var pathString2 = Path.Combine(originalDirectory.ToString(), "Products\\" + id.ToString() + "\\Gallery\\Thumbs");
+
+                    var path = string.Format($"{pathString1}\\{file.FileName}");
+                    var path2 = string.Format($"{pathString2}\\{file.FileName}");
+
+                    file.SaveAs(path);
+
+                    WebImage img = new WebImage(file.InputStream);
+                    img.Resize(200, 200);
+                    img.Save(path2);
+                }
+            }
+        }
+
+
+        [HttpPost]
+        public void DeleteImage(int id, string imageName)
+        {
+            var originalDirectory = new DirectoryInfo(string.Format($"{Server.MapPath(@"\")}Images\\Uploads"));
+            var pathString1 = Path.Combine(originalDirectory.ToString(), "Products\\" + id.ToString() + "\\Gallery\\" + imageName);
+            var pathString2 = Path.Combine(originalDirectory.ToString(), "Products\\" + id.ToString() + "\\Gallery\\Thumbs\\" + imageName);
+
+            if (System.IO.File.Exists(pathString1))
+            {
+                System.IO.File.Delete(pathString1);
+            }
+            if (System.IO.File.Exists(pathString2))
+            {
+                System.IO.File.Delete(pathString2);
+            }
+        }
+
     }
 }
