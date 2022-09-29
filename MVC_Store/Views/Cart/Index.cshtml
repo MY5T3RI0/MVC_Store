@@ -33,18 +33,19 @@ else
             <th></th>
         </tr>
 
-        @foreach (var item in Model) {
+        @foreach (var item in Model)
+        {
             <tr>
                 <td>
                     @Html.DisplayFor(modelItem => item.ProductName)
                 </td>
-                <td>
+                <td class="cnt@(item.ProductId)">
                     @Html.DisplayFor(modelItem => item.Count)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Price)
+                    @Html.DisplayFor(modelItem => item.Price)$
                 </td>
-                
+
                 <td>
                     <img src="/Images/Uploads/Products/@item.ProductId/Thumbs/@item.Image" alt="Product image" />
                 </td>
@@ -53,8 +54,8 @@ else
                     <a href="#" class="decproduct" data-id="@item.ProductId">-</a>
                     <a href="#" class="removeproduct" data-id="@item.ProductId">Remove</a>
                 </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Total) $
+                <td class="total@(item.ProductId)">
+                    @Html.DisplayFor(modelItem => item.Total)$
                 </td>
 
             </tr>
@@ -67,8 +68,15 @@ else
             <td></td>
             <td></td>
             <td></td>
-            <td>@ViewBag.GrandTotal $</td>
-        </tr> 
+            <td class="grandtotal">
+                <b>Grand total: </b><span>@ViewBag.GrandTotal $</span>
+            </td>
+        </tr>
 
     </table>
+}
+
+@section Scripts
+{
+    <script src="~/Content/ShopJS/IncrementProductJS.js"></script>
 }

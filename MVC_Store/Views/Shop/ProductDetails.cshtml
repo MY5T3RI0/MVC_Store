@@ -35,8 +35,8 @@
 <div class="row">
     <h3>Product Gallery</h3>
     <div class="col-sm-12 fancyboxdiv">
-        <br /><br />  
-        <div class="row"> 
+        <br /><br />
+        <div class="row">
             @foreach (var item in Model.GalleryImages)
             {
                 <div class="col">
@@ -54,4 +54,31 @@
     <link href="~/Content/jquery.fancybox.css" rel="stylesheet" />
     <script src="~/Scripts/jquery.fancybox.js"></script>
     <script src="~/Content/ShopJS/ProductDetailScript.js"></script>
+
+    <script>
+/********************Add to cart*********************/
+$(function () {
+    $("a.addtocart").click(function (e) {
+        e.preventDefault();
+
+        $("span.loader").addClass("d-inline-block");
+
+        var url = "/Cart/AddToCartPartial";
+
+        $.get(url, { id: @Model.Id
+    }, function myfunction(data) {
+        $(".ajaxcart").html(data);
+        }).done(function () {
+            $("span.loader").removeClass("d-inline-block");
+            $("div.ajaxmsg").addClass("d-inline-block");
+
+            setTimeout(function () {
+                $("div.ajaxmsg").fadeOut("fast");
+                $("div.ajaxmsg").removeClass("d-inline-block");
+            }, 2000);
+        });
+    });
+});
+/****************************************************/
+    </script>
 }
