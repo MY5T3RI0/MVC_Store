@@ -20,9 +20,28 @@
 
                     @Html.Action("PagesMenuPartial", "Pages")
 
+                    @if (Request.IsAuthenticated)
+                    {
+                        <li class="nav-item">@Html.ActionLink("Log out", "Logout", "Account", null, new { @class = "nav-link", style = "text-decoration:none" })</li>
+                        <li class="nav-item">@Html.Action("UserNavPartial", "Account", new { area = "" })</li>
+                    }
+                    else
+                    {
+                        if (ViewBag.Title == "Login")
+                        {
+                            <li class="nav-item">@Html.ActionLink("Log in", "Login", "Account", null, new { @class = "nav-link active", style = "text-decoration: none" })</li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">@Html.ActionLink("Log in", "Login", "Account", null, new { @class = "nav-link", style = "text-decoration: none" })</li>
+                        }
+                    }
                 </ul>
                 <span class="navbar-text">
-                    @Html.Action("CartPartial", "Cart")
+                    @if (Request.IsAuthenticated)
+                    {
+                        @Html.Action("CartPartial", "Cart")
+                    }
                 </span>
             </div>
         </div>
