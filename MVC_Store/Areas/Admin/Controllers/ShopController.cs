@@ -1,4 +1,5 @@
-﻿using MVC_Store.Models.Data;
+﻿using MVC_Store.Areas.Admin.Models.ViewModels.Shop;
+using MVC_Store.Models.Data;
 using MVC_Store.Models.ViewModels.Shop;
 using PagedList;
 using System;
@@ -11,6 +12,7 @@ using System.Web.Mvc;
 
 namespace MVC_Store.Areas.Admin.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class ShopController : Controller
     {
         // GET: Admin/Shop
@@ -459,5 +461,51 @@ namespace MVC_Store.Areas.Admin.Controllers
             }
         }
 
+
+        [HttpGet]
+        public ActionResult Orders()
+        {
+            List<OrdersForAdminVM> ordersForAdmin = new List<OrdersForAdminVM>();
+            using (var db = new Db())
+            {
+                List<OrderVM> orders = db.Orders.ToArray().Select(o => new OrderVM(o)).ToList();
+
+                foreach (var order in orders)
+                {
+                    Dictionary<string, int> productAndQty = new Dictionary<string, int>();
+
+                    decimal total = 0m;
+
+                    List<OrderDetailsDTO> orderDetailsList = db.OrderDetails.Where(o => o.OrderId == order.OrederId).ToList();
+
+                    UserDTO user = db.Users.FirstOrDefault(u => u.Id == order.UserId);
+
+                    string userName = user.UserName;
+
+                    foreach (var orderDetails in orderDetailsList)
+                    {
+                        ProductDTO product = db.Products.FirstOrDefault(p => p.Id == orderDetails.ProductId);
+
+                        decimal price = product.Price;
+                        string productName = product.Name;
+
+                        productAndQty.Add(productName, orderDetails.Quantity);
+
+                        total += orderDetails.Quantity * price;
+                    }
+
+                    ordersForAdmin.Add(new OrdersForAdminVM()
+                    {
+                        OrderNumber = order.OrederId,
+                        Username = userName,
+                        Total = total,
+                        ProductsAndQty = productAndQty,
+                        CreatedAt = order.CreatedAt
+                    });
+                }
+            }
+
+            return View(ordersForAdmin);
+        }
     }
 }

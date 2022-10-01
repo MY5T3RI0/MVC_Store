@@ -29,11 +29,14 @@
                     <li class="nav-item">
                         @Html.ActionLink("Products", "Products", "Shop", "", new { @class = "nav-link" })
                     </li>
+                    <li class="nav-item">
+                    @Html.ActionLink("Orders", "Orders", "Shop", null, new { @class = "nav-link", style = "text-decoration:none" })
+                    </li>
                 </ul>
 
                 <ul class="navbar-nav dropdown-menu-lg-end">
                     <li>
-                        <a class="navbar-brand" target="_blank" href="#">ShopingCart</a>
+                        <a class="navbar-brand" target="_blank" href="/">ShopingCart</a>
                     </li>
                 </ul>
                 @*<span class="navbar-text">

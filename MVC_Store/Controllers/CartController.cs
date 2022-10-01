@@ -160,5 +160,60 @@ namespace MVC_Store.Controllers
                 cart.Remove(model);
             }
         }
+
+        public ActionResult PaypalPartial()
+        {
+            var cart = Session["cart"] as List<CartVM>;
+
+            return PartialView(cart);
+        }
+
+        [HttpPost]
+        public void PlaceOrder()
+        {
+            var cart = Session["cart"] as List<CartVM>;
+
+            var username = User.Identity.Name;
+
+            int orderId;
+
+            OrderDTO orderDto = new OrderDTO();
+
+            using (var db = new Db())
+            {
+                var q = db.Users.FirstOrDefault(u => u.UserName == username);
+                var userId = q.Id;
+
+                orderDto.UserId = userId;
+                orderDto.CreatedAt = DateTime.Now;
+
+                db.Orders.Add(orderDto);
+                db.SaveChanges();
+
+                orderId = orderDto.OrderId;
+
+                var orderDetailsDTO = new OrderDetailsDTO();
+
+                foreach (var item in cart)
+                {
+                    orderDetailsDTO.OrderId = orderId;
+                    orderDetailsDTO.UserId = userId;
+                    orderDetailsDTO.ProductId = item.ProductId;
+                    orderDetailsDTO.Quantity = item.Count;
+
+                    db.OrderDetails.Add(orderDetailsDTO);
+                    db.SaveChanges();
+                }
+            }
+
+            var client = new System.Net.Mail.SmtpClient("smtp.mailtrap.io", 2525)
+            {
+                Credentials = new System.Net.NetworkCredential("5bead6193b814f", "e423afcaaa477b"),
+                EnableSsl = true
+            };
+            client.Send("shop@example.com", "admin@example.com", "New Order", $"You have a new order. Order number: {orderId}");
+
+            Session["cart"] = null;
+        }
     }
 }

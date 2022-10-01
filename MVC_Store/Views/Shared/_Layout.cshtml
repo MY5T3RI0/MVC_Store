@@ -23,7 +23,21 @@
                     @if (Request.IsAuthenticated)
                     {
                         <li class="nav-item">@Html.ActionLink("Log out", "Logout", "Account", null, new { @class = "nav-link", style = "text-decoration:none" })</li>
-                        <li class="nav-item">@Html.Action("UserNavPartial", "Account", new { area = "" })</li>
+                        if (User.IsInRole("User"))
+                        {
+                            if (ViewBag.Title == "User Profile")
+                            {
+                                <li class="nav-item active">@Html.Action("UserNavPartial", "Account", new { area = "" })</li>
+                            }
+                            else
+                            {
+                                <li class="nav-item">@Html.Action("UserNavPartial", "Account", new { area = "" })</li>
+                            }
+                        }
+                        if (User.IsInRole("User"))
+                        {
+                            <li class="nav-item">@Html.ActionLink("Orders", "Order", "Account", null, new { @class = "nav-link", style = "text-decoration:none" })</li>
+                        }
                     }
                     else
                     {
@@ -36,13 +50,21 @@
                             <li class="nav-item">@Html.ActionLink("Log in", "Login", "Account", null, new { @class = "nav-link", style = "text-decoration: none" })</li>
                         }
                     }
+
                 </ul>
-                <span class="navbar-text">
-                    @if (Request.IsAuthenticated)
-                    {
+
+                @if (Request.IsAuthenticated && User.IsInRole("Admin"))
+                {
+                    <span class="navbar-text">
+                        @Html.ActionLink("Admin Area", "Index", "Dashboard", new { area = "Admin" }, null)
+                    </span>
+                }
+                else if (ViewBag.Title != "Cart Details" && Request.IsAuthenticated)
+                {
+                    <span class="navbar-text">
                         @Html.Action("CartPartial", "Cart")
-                    }
-                </span>
+                    </span>
+                }
             </div>
         </div>
     </nav>
@@ -69,7 +91,7 @@
             }
             else
             {
-                <div class="col">
+                <div class="col" style="position:relative">
                     @RenderBody()
                 </div>
             }
